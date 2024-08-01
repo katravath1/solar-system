@@ -107,7 +107,7 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build and push to dockerhub accepted the cuurent change
+    - name: Build and push to dockerhub
       uses: docker/build-push-action@v6
       with:
         context: .
@@ -119,14 +119,18 @@ jobs:
 
 
   dev-deploy:
-    if: containes('github.ref', 'feature/')
+    if: github.ref == 'refs/heads/feature/test'
     needs: build-and-push
     uses: ./.github/workflows/resuable-workflow.yaml
+    secrets:
+      k8s-configfile: ${{ secrets.KUBECONFIG}}
 
   prod-deploy:
     if: github.ref == 'refs/heads/main'
     needs: build-and-push
     uses: ./.github/workflows/resuable-workflow.yaml
+    secrets:
+      k8s-configfile: ${{ secrets.KUBECONFIG}}
 
 
 
